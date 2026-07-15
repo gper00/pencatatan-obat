@@ -24,7 +24,7 @@ object Routes {
     const val OBAT_FORM = "obat/form?obatId={obatId}"
     const val OBAT_DETAIL = "obat/{obatId}"
     const val TRANSAKSI = "transaksi"
-    const val RIWAYAT = "transaksi/riwayat/{obatId}"
+    const val RIWAYAT_GLOBAL = "riwayat"
     const val REMINDER = "reminder"
 
     fun obatDetail(obatId: Int) = "obat/$obatId"

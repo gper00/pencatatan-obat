@@ -3,7 +3,9 @@ package com.example.tes.data.repository
 import com.example.tes.data.dao.ObatDao
 import com.example.tes.data.dao.RiwayatStokDao
 import com.example.tes.data.entity.RiwayatStok
+import com.example.tes.data.entity.TrenHari
 import kotlinx.coroutines.flow.Flow
+import java.util.Calendar
 
 class TransaksiRepository(
     private val obatDao: ObatDao,
@@ -17,6 +19,19 @@ class TransaksiRepository(
 
     fun getRecentRiwayat(limit: Int = 50): Flow<List<RiwayatStok>> =
         riwayatStokDao.getRecent(limit)
+
+    fun getTren7Hari(): Flow<List<TrenHari>> {
+        val kalender = Calendar.getInstance()
+        kalender.add(Calendar.DAY_OF_YEAR, -6)
+        kalender.set(Calendar.HOUR_OF_DAY, 0)
+        kalender.set(Calendar.MINUTE, 0)
+        kalender.set(Calendar.SECOND, 0)
+        kalender.set(Calendar.MILLISECOND, 0)
+        return riwayatStokDao.getTren7Hari(kalender.timeInMillis)
+    }
+
+    fun getRiwayatByDateRange(startDate: Long, endDate: Long): Flow<List<RiwayatStok>> =
+        riwayatStokDao.getByDateRange(startDate, endDate)
 
     suspend fun stokMasuk(obatId: Int, qty: Int, harga: Int?, catatan: String?) {
         val obat = obatDao.getById(obatId) ?: return

@@ -3,7 +3,10 @@ package com.example.tes.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tes.data.DataSeeder
+import com.example.tes.data.entity.KategoriStok
+import com.example.tes.data.entity.TrenHari
 import com.example.tes.data.repository.ObatRepository
+import com.example.tes.data.repository.TransaksiRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val obatRepository: ObatRepository,
+    private val transaksiRepository: TransaksiRepository,
     private val dataSeeder: DataSeeder
 ) : ViewModel() {
 
@@ -24,6 +28,12 @@ class HomeViewModel(
 
     val akanExpired: StateFlow<Int> = obatRepository.countAkanExpired()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    val stokPerKategori: StateFlow<List<KategoriStok>> = obatRepository.getStokPerKategori()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val tren7Hari: StateFlow<List<TrenHari>> = transaksiRepository.getTren7Hari()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _isSeeding = MutableStateFlow(false)
     val isSeeding: StateFlow<Boolean> = _isSeeding.asStateFlow()

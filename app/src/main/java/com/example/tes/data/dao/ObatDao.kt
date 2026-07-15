@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.tes.data.entity.KategoriStok
 import com.example.tes.data.entity.Obat
 import kotlinx.coroutines.flow.Flow
 
@@ -34,6 +35,15 @@ interface ObatDao {
 
     @Query("SELECT COUNT(*) FROM obat WHERE expired_date IS NOT NULL AND expired_date <= :tgl")
     fun countAkanExpired(tgl: String): Flow<Int>
+
+    @Query("""
+        SELECT k.nama AS namaKategori, COALESCE(SUM(o.stok), 0) AS totalStok
+        FROM kategori k
+        LEFT JOIN obat o ON k.id = o.kategori_id
+        GROUP BY k.id, k.nama
+        ORDER BY totalStok DESC
+    """)
+    fun getStokPerKategori(): Flow<List<KategoriStok>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(obat: Obat): Long

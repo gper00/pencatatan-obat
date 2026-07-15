@@ -18,7 +18,8 @@ import com.example.tes.ui.obat.ObatListScreen
 import com.example.tes.ui.obat.ObatViewModel
 import com.example.tes.ui.reminder.ReminderScreen
 import com.example.tes.ui.reminder.ReminderViewModel
-import com.example.tes.ui.transaksi.RiwayatScreen
+import com.example.tes.ui.transaksi.GlobalRiwayatScreen
+import com.example.tes.ui.transaksi.RiwayatViewModel
 import com.example.tes.ui.transaksi.TransaksiScreen
 import com.example.tes.ui.transaksi.TransaksiViewModel
 
@@ -31,7 +32,13 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
     ) {
         composable(Routes.HOME) {
             val app = LocalContext.current.applicationContext as TesApplication
-            val viewModel = remember { HomeViewModel(app.container.obatRepository, app.container.dataSeeder) }
+            val viewModel = remember {
+                HomeViewModel(
+                    app.container.obatRepository,
+                    app.container.transaksiRepository,
+                    app.container.dataSeeder
+                )
+            }
             HomeScreen(viewModel = viewModel)
         }
 
@@ -81,16 +88,21 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
         composable(Routes.TRANSAKSI) {
             val app = LocalContext.current.applicationContext as TesApplication
             val viewModel = remember { TransaksiViewModel(app.container.obatRepository, app.container.transaksiRepository) }
-            TransaksiScreen(viewModel = viewModel)
+            TransaksiScreen(
+                viewModel = viewModel,
+                onRiwayatClick = { navController.navigate(Routes.RIWAYAT_GLOBAL) }
+            )
         }
 
-        composable(
-            route = Routes.RIWAYAT,
-            arguments = listOf(navArgument("obatId") { type = NavType.IntType })
-        ) { _ ->
+        composable(Routes.RIWAYAT_GLOBAL) {
             val app = LocalContext.current.applicationContext as TesApplication
-            val viewModel = remember { TransaksiViewModel(app.container.obatRepository, app.container.transaksiRepository) }
-            RiwayatScreen(viewModel = viewModel)
+            val viewModel = remember {
+                RiwayatViewModel(app.container.transaksiRepository, app.container.obatRepository)
+            }
+            GlobalRiwayatScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable(Routes.REMINDER) {

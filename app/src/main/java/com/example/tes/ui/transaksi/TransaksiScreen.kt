@@ -41,7 +41,10 @@ import com.example.tes.data.entity.Obat
 import kotlinx.coroutines.launch
 
 @Composable
-fun TransaksiScreen(viewModel: TransaksiViewModel) {
+fun TransaksiScreen(
+    viewModel: TransaksiViewModel,
+    onRiwayatClick: () -> Unit = {}
+) {
     val obatList by viewModel.allObat.collectAsState()
     var searchText by remember { mutableStateOf("") }
     val filteredObat = if (searchText.isBlank()) {
@@ -115,6 +118,21 @@ fun TransaksiScreen(viewModel: TransaksiViewModel) {
                         }
                     }
                 }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+                TextButton(
+                    onClick = onRiwayatClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Lihat Riwayat Lengkap →",
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }

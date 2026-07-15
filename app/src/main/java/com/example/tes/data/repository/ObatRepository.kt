@@ -4,6 +4,7 @@ import com.example.tes.data.dao.KategoriDao
 import com.example.tes.data.dao.ObatDao
 import com.example.tes.data.dao.SatuanDao
 import com.example.tes.data.entity.Kategori
+import com.example.tes.data.entity.KategoriStok
 import com.example.tes.data.entity.Obat
 import com.example.tes.data.entity.Satuan
 import kotlinx.coroutines.flow.Flow
@@ -45,6 +46,14 @@ class ObatRepository(
         val tgl = dateFormat.format(cal.time)
         return obatDao.getAkanExpired(tgl)
     }
+
+    fun getStokPerKategori(): Flow<List<KategoriStok>> = obatDao.getStokPerKategori()
+
+    fun getAllObatOnce(): Flow<List<Obat>> = obatDao.getAll()
+
+    fun getAllKategorisOnce(): Flow<List<Kategori>> = kategoriDao.getAll()
+
+    fun getAllSatuansOnce(): Flow<List<Satuan>> = satuanDao.getAll()
 
     fun countAll(): Flow<Int> = obatDao.countAll()
     fun countStokMenipis(): Flow<Int> = obatDao.countStokMenipis()

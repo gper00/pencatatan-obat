@@ -1,12 +1,17 @@
 package com.example.tes.ui.obat
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tes.data.entity.Kategori
 import com.example.tes.data.entity.Obat
 import com.example.tes.data.entity.Satuan
+import com.example.tes.data.export.ExcelExporter
+import com.example.tes.data.export.ExportObat
+import com.example.tes.data.export.PdfExporter
 import com.example.tes.data.repository.ObatRepository
 import com.example.tes.data.repository.TransaksiRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -76,6 +81,42 @@ class ObatViewModel(
             val success = transaksiRepository.stokKeluar(obatId, qty, harga, catatan)
             if (success) loadObat(obatId)
             callback(success)
+        }
+    }
+
+    private val _exportMessage = MutableStateFlow<String?>(null)
+    val exportMessage: StateFlow<String?> = _exportMessage.asStateFlow()
+
+    fun clearExportMessage() {
+        _exportMessage.value = null
+    }
+
+    fun exportInventaris(context: Context, format: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val kategoris = obatRepository.getKategoris()
+                val exportList = obatList.value.map { obat ->
+                    val kategori = kategoris.find { it.id == obat.kategoriId }
+                    ExportObat(
+                        kode = obat.kode,
+                        nama = obat.nama,
+                        kategori = kategori?.nama ?: "-",
+                        stok = obat.stok,
+                        stokMinimum = obat.stokMinimum,
+                        hargaBeli = obat.hargaBeli,
+                        hargaJual = obat.hargaJual,
+                        expiredDate = obat.expiredDate
+                    )
+                }
+                val file = if (format == "PDF") {
+                    PdfExporter(context).exportInventaris(exportList)
+                } else {
+                    ExcelExporter(context).exportInventaris(exportList)
+                }
+                _exportMessage.emit("Laporan tersimpan: ${file.name}")
+            } catch (e: Exception) {
+                _exportMessage.emit("Gagal: ${e.message}")
+            }
         }
     }
 }

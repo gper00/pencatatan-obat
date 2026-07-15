@@ -3,6 +3,8 @@ package com.example.tes.di
 import android.content.Context
 import com.example.tes.data.DataSeeder
 import com.example.tes.data.database.AppDatabase
+import com.example.tes.data.export.ExcelExporter
+import com.example.tes.data.export.PdfExporter
 import com.example.tes.data.repository.ObatRepository
 import com.example.tes.data.repository.TransaksiRepository
 
@@ -19,6 +21,9 @@ class AppContainer(context: Context) {
         obatDao = database.obatDao(),
         riwayatStokDao = database.riwayatStokDao()
     )
+
+    val pdfExporter = PdfExporter(context)
+    val excelExporter = ExcelExporter(context)
 
     val dataSeeder = DataSeeder(obatRepository, transaksiRepository)
 }

@@ -69,4 +69,7 @@ dependencies {
 
     // Material (for existing XML layout)
     implementation("com.google.android.material:material:1.11.0")
+
+    // FastExcel (export XLSX)
+    implementation("org.dhatim:fastexcel:0.18.2")
 }

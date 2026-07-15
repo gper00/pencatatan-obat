@@ -43,6 +43,8 @@ fun HomeScreen(viewModel: HomeViewModel) {
     val akanExpired by viewModel.akanExpired.collectAsState()
     val isSeeding by viewModel.isSeeding.collectAsState()
     val seedMessage by viewModel.seedMessage.collectAsState()
+    val stokPerKategori by viewModel.stokPerKategori.collectAsState()
+    val tren7Hari by viewModel.tren7Hari.collectAsState()
 
     LaunchedEffect(seedMessage) {
         if (seedMessage != null) {
@@ -89,6 +91,22 @@ fun HomeScreen(viewModel: HomeViewModel) {
                     label = "Akan Expired",
                     value = akanExpired.toString(),
                     color = MaterialTheme.colorScheme.tertiary
+                )
+            }
+
+            if (totalObat > 0) {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                BarChart(
+                    data = stokPerKategori,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LineChart(
+                    data = tren7Hari,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
